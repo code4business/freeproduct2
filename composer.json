@@ -1,0 +1,30 @@
+{
+  "name": "code4business/freeproduct2",
+  "description": "Adds a sales rule action to add a product to cart. Can be used to create sales rules to add gifts to cart.",
+  "require": {
+    "magento/module-sales-rule": "^101.0.4",
+    "php": "7.0.*"
+  },
+  "require-dev": {
+    "tddwizard/magento2-fixtures": "^0.1.0"
+  },
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [
+    "OSL-3.0"
+  ],
+  "authors": [
+    {
+      "name": "Dominik Meglič",
+      "email": "meglic@code4business.de"
+    }
+  ],
+  "autoload": {
+    "files": [
+      "registration.php"
+    ],
+    "psr-4": {
+      "C4B\\FreeProduct\\": ""
+    }
+  }
+}

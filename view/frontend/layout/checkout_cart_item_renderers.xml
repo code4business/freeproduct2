@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Adds a renderer for freeproduct items which will be of type freeproduct_gift
+ *
+ * @category   C4B
+ * @package    C4B_FreeProduct
+ * @author     Dominik Meglič <meglic@code4business.de>
+ * @copyright  code4business Software GmbH
+ * @license    http://opensource.org/licenses/osl-3.0.php
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="checkout.cart.item.renderers">
+            <block class="Magento\Checkout\Block\Cart\Item\Renderer"
+                   name="checkout.cart.item.renderer.freeproduct_gift"
+                   as="freeproduct_gift"
+                   template="C4B_FreeProduct::cart/item/freeproduct.phtml" />
+        </referenceBlock>
+    </body>
+</page>

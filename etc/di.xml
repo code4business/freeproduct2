@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory">
+        <arguments>
+            <argument name="discountRules" xsi:type="array">
+                <item name="add_gift" xsi:type="string">C4B\FreeProduct\SalesRule\Action\GiftAction</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <type name="Magento\SalesRule\Model\Validator\Pool">
+        <arguments>
+            <argument name="validators" xsi:type="array">
+                <item name="discount" xsi:type="array">
+                    <item name="freeproduct_exclude_gift" xsi:type="object">C4B\FreeProduct\SalesRule\Validator\GiftItemExcluder</item>
+                </item>
+            </argument>
+        </arguments>
+    </type>
+</config>
