@@ -6,6 +6,7 @@ use C4B\FreeProduct\SalesRule\Action\GiftAction;
 use Magento\TestFramework\Helper\Bootstrap;
 
 use TddWizard\Fixtures as TddWizard;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests that salesrule is able to add gift products
@@ -16,7 +17,7 @@ use TddWizard\Fixtures as TddWizard;
  * @copyright  code4business Software GmbH
  * @license    http://opensource.org/licenses/osl-3.0.php
  */
-class FreeProductTest extends \PHPUnit_Framework_TestCase
+class FreeProductTest extends TestCase
 {
     /**
      * @var Helper\TestHelper

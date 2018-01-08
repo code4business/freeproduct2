@@ -9,7 +9,7 @@ The development and the function of the original Magento1 extension is described
 Requirements
 -------
 - PHP >= 7.0.0
-- Magento >= 2.1.8
+- Magento >= 2.2
 
 Supported Product Types
 -------

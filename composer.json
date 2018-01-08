@@ -6,10 +6,11 @@
     "php": ">=7.0"
   },
   "require-dev": {
-    "tddwizard/magento2-fixtures": "^0.1.0"
+    "tddwizard/magento2-fixtures": "^0.1.0",
+    "phpunit/phpunit": "~6.2.0"
   },
   "type": "magento2-module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": [
     "OSL-3.0"
   ],
