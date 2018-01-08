@@ -20,7 +20,6 @@ Instalation
 ### Via composer (recommended)
 Go to the Magento 2 root directory and run the following commands in the shell:
 ```
-composer config repositories.code4business_freeproduct vcs git@github.com:code4business/freeproduct2.git
 composer require code4business/freeproduct2
 bin/magento module:enable C4B_FreeProduct
 bin/magento setup:upgrade

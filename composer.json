@@ -1,6 +1,8 @@
 {
   "name": "code4business/freeproduct2",
   "description": "Adds a sales rule action to add a product to cart. Can be used to create sales rules to add gifts to cart.",
+  "keywords": ["magento2","gift sales rule"],
+  "homepage": "https://github.com/code4business/freeproduct2",
   "require": {
     "magento/module-sales-rule": ">=100.0.0",
     "php": ">=7.0"
