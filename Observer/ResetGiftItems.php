@@ -12,9 +12,6 @@ use Magento\Quote\Model\Quote;
 /**
  * Observer for resetting gift cart items
  *
- * Note: Using quote->getAllItems() instead of the API getItems because they do not return the same items and sometimes
- * other functions will get old/cached items.
- *
  * @category   C4B
  * @package    C4B_FreeProduct
  * @author     Dominik Meglič <meglic@code4business.de>
@@ -32,14 +29,12 @@ class ResetGiftItems implements ObserverInterface
      */
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        /** @var Quote $quote */
-        $quote = $observer->getEvent()->getData('quote');
         /** @var ShippingAssignmentInterface $shippingAssignment */
         $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
         /** @var Quote\Address $address */
         $address = $shippingAssignment->getShipping()->getAddress();
 
-        if ($quote->getAllItems() == null || $address->getAddressType() != Quote\Address::TYPE_SHIPPING)
+        if ($shippingAssignment->getItems() == null || $address->getAddressType() != Quote\Address::TYPE_SHIPPING)
         {
             return;
         }
@@ -47,7 +42,7 @@ class ResetGiftItems implements ObserverInterface
         $newShippingAssignment = [];
 
         /** @var Quote\Item $quoteItem */
-        foreach ($quote->getAllItems() as $quoteItem)
+        foreach ($shippingAssignment->getItems() as $quoteItem)
         {
             if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
             {
