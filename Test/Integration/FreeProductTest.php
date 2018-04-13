@@ -171,6 +171,7 @@ class FreeProductTest extends TestCase
      * @magentoAppIsolation enabled
      * @magentoConfigFixture default/carriers/flatrate/active 1
      * @magentoConfigFixture default/payment/checkmo/active 1
+     * @magentoConfigFixture default/general/region/state_required AT
      */
     public function testPlaceOrder()
     {
@@ -193,7 +194,7 @@ class FreeProductTest extends TestCase
         TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('FreeProductTest-4')->withPrice(100)->build();
         $customerFixture = new TddWizard\Customer\CustomerFixture(TddWizard\Customer\CustomerBuilder::aCustomer()
             ->withAddresses(
-                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->asDefaultBilling()->asDefaultShipping())
+                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->withRegionId(null)->asDefaultBilling()->asDefaultShipping())
             ->build());
         $customerFixture->login();
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()->withSimpleProduct('FreeProductTest-4', 2)->build();
