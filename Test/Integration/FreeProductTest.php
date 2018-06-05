@@ -3,7 +3,12 @@
 namespace C4B\FreeProduct\Test\Integration;
 
 use C4B\FreeProduct\SalesRule\Action\GiftAction;
+use Magento\Store\Api\Data\StoreInterface;
+use Magento\Store\Model\StoreManagerInterface;
 use Magento\TestFramework\Helper\Bootstrap;
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Encryption\EncryptorInterface as Encryptor;
 
 use TddWizard\Fixtures as TddWizard;
 use PHPUnit\Framework\TestCase;
@@ -64,8 +69,9 @@ class FreeProductTest extends TestCase
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-1'
         ]);
 
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('freeproduct-1')->withPrice(50)->build();
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('FreeProductTest-1')->withPrice(150)->build();
+        $websiteId = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)->getDefaultStoreView()->getWebsiteId();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('freeproduct-1')->withPrice(50)->build();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('FreeProductTest-1')->withPrice(150)->build();
 
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()->withSimpleProduct('FreeProductTest-1', 5)->build();
 
@@ -99,8 +105,9 @@ class FreeProductTest extends TestCase
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-2'
         ]);
 
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('freeproduct-2')->withPrice(50)->build();
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('FreeProductTest-2')->withPrice(100)->build();
+        $websiteId = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)->getDefaultStoreView()->getWebsiteId();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('freeproduct-2')->withPrice(50)->build();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('FreeProductTest-2')->withPrice(100)->build();
 
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()
             ->withSimpleProduct('FreeProductTest-2', 4)->withSimpleProduct('freeproduct-2', 1)
@@ -151,9 +158,10 @@ class FreeProductTest extends TestCase
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-4'
         ]);
 
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('freeproduct-3')->withPrice(50)->build();
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('freeproduct-4')->withPrice(50)->build();
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('FreeProductTest-3')->withPrice(100)->build();
+        $websiteId = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)->getDefaultStoreView()->getWebsiteId();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('freeproduct-3')->withPrice(50)->build();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('freeproduct-4')->withPrice(50)->build();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('FreeProductTest-3')->withPrice(100)->build();
 
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()->withSimpleProduct('FreeProductTest-3', 4)->build();
 
@@ -171,7 +179,6 @@ class FreeProductTest extends TestCase
      * @magentoAppIsolation enabled
      * @magentoConfigFixture default/carriers/flatrate/active 1
      * @magentoConfigFixture default/payment/checkmo/active 1
-     * @magentoConfigFixture default/general/region/state_required AT
      */
     public function testPlaceOrder()
     {
@@ -190,11 +197,12 @@ class FreeProductTest extends TestCase
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-5'
         ]);
 
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('freeproduct-5')->withPrice(50)->build();
-        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withSku('FreeProductTest-4')->withPrice(100)->build();
-        $customerFixture = new TddWizard\Customer\CustomerFixture(TddWizard\Customer\CustomerBuilder::aCustomer()
+        $websiteId = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)->getDefaultStoreView()->getWebsiteId();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('freeproduct-5')->withPrice(50)->build();
+        TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('FreeProductTest-4')->withPrice(100)->build();
+        $customerFixture = new TddWizard\Customer\CustomerFixture($this->createCustomerBuilder()
             ->withAddresses(
-                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->withRegionId(null)->asDefaultBilling()->asDefaultShipping())
+                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->asDefaultBilling()->asDefaultShipping())
             ->build());
         $customerFixture->login();
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()->withSimpleProduct('FreeProductTest-4', 2)->build();
@@ -206,7 +214,36 @@ class FreeProductTest extends TestCase
             ->withCustomerShippingAddressId($customerFixture->getDefaultShippingAddressId())
             ->placeOrder();
 
-        $this->assertEquals(200, $order->getSubtotal());
+        $this->assertEquals(200, $order->getSubtotalInclTax());
         $this->assertTrue($this->testHelper->getFreeproductItem($order, 'freeproduct-5') !== null, 'Order does not contain Freeproduct item');
+    }
+
+    /**
+     * Create customer builder manually, to be able to set website ID
+     * @return TddWizard\Customer\CustomerBuilder
+     */
+    private function createCustomerBuilder(): \TddWizard\Fixtures\Customer\CustomerBuilder
+    {
+        /** @var StoreInterface $defaultStore */
+        $defaultStore = Bootstrap::getObjectManager()->get(StoreManagerInterface::class)->getDefaultStoreView();
+        /** @var CustomerInterface $customer */
+        $customer = Bootstrap::getObjectManager()->create(CustomerInterface::class);
+        $customer->setWebsiteId($defaultStore->getWebsiteId())
+            ->setGroupId(1)
+            ->setStoreId($defaultStore->getId())
+            ->setPrefix('Mr.')
+            ->setFirstname('John')
+            ->setMiddlename('A')
+            ->setLastname('Smith')
+            ->setSuffix('Esq.')
+            ->setTaxvat('12')
+            ->setGender(0);
+        $password = 'Test#123';
+        return new \TddWizard\Fixtures\Customer\CustomerBuilder(
+            Bootstrap::getObjectManager()->create(CustomerRepositoryInterface::class),
+            $customer,
+            Bootstrap::getObjectManager()->create(Encryptor::class),
+            $password
+        );
     }
 }
