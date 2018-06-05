@@ -44,7 +44,11 @@ class ResetGiftItems implements ObserverInterface
         /** @var Quote\Item $quoteItem */
         foreach ($shippingAssignment->getItems() as $quoteItem)
         {
-            if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
+            if ($quoteItem->isDeleted())
+            {
+                continue;
+            }
+            else if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
             {
                 $quoteItem->isDeleted(true);
 
