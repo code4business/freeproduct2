@@ -31,6 +31,8 @@ class ResetGiftItems implements ObserverInterface
     {
         /** @var ShippingAssignmentInterface $shippingAssignment */
         $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
+        /** @var Quote $quote */
+        $quote = $observer->getEvent()->getData('quote');
         /** @var Quote\Address $address */
         $address = $shippingAssignment->getShipping()->getAddress();
 
@@ -74,5 +76,13 @@ class ResetGiftItems implements ObserverInterface
 
         $shippingAssignment->setItems($newShippingAssignment);
         $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
+        $address->unsetData('cached_items_all');
+
+        $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
+
+        if ($shippingAssignmentsExtension != null)
+        {
+            $shippingAssignmentsExtension[0] = $shippingAssignment;
+        }
     }
 }
