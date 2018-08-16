@@ -41,6 +41,26 @@ class ResetGiftItems implements ObserverInterface
             return;
         }
 
+        $newShippingAssignmentItems = $this->removeOldGiftQuoteItems($shippingAssignment);
+
+        $shippingAssignment->setItems($newShippingAssignmentItems);
+        $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
+        $address->unsetData('cached_items_all');
+
+        $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
+
+        if ($shippingAssignmentsExtension != null)
+        {
+            $shippingAssignmentsExtension[0] = $shippingAssignment;
+        }
+    }
+
+    /**
+     * @param ShippingAssignmentInterface $shippingAssignment
+     * @return array
+     */
+    private function removeOldGiftQuoteItems($shippingAssignment): array
+    {
         $newShippingAssignment = [];
 
         /** @var Quote\Item $quoteItem */
@@ -49,8 +69,7 @@ class ResetGiftItems implements ObserverInterface
             if ($quoteItem->isDeleted())
             {
                 continue;
-            }
-            else if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
+            } else if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
             {
                 $quoteItem->isDeleted(true);
 
@@ -62,8 +81,7 @@ class ResetGiftItems implements ObserverInterface
                 {
                     $option->isDeleted(true);
                 }
-            }
-            else
+            } else
             {
                 /**
                  * Reset shipping assignment to prevent others from working on old items
@@ -73,16 +91,6 @@ class ResetGiftItems implements ObserverInterface
                 $newShippingAssignment[] = $quoteItem;
             }
         }
-
-        $shippingAssignment->setItems($newShippingAssignment);
-        $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
-        $address->unsetData('cached_items_all');
-
-        $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
-
-        if ($shippingAssignmentsExtension != null)
-        {
-            $shippingAssignmentsExtension[0] = $shippingAssignment;
-        }
+        return $newShippingAssignment;
     }
 }
