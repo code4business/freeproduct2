@@ -47,12 +47,7 @@ class ResetGiftItems implements ObserverInterface
         $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
         $address->unsetData('cached_items_all');
 
-        $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
-
-        if ($shippingAssignmentsExtension != null)
-        {
-            $shippingAssignmentsExtension[0] = $shippingAssignment;
-        }
+        $this->updateExtensionAttributes($quote, $shippingAssignment);
     }
 
     /**
@@ -92,5 +87,24 @@ class ResetGiftItems implements ObserverInterface
             }
         }
         return $newShippingAssignment;
+    }
+
+    /**
+     * Update shipping assignments from cart.
+     *
+     * @param Quote $quote
+     * @param ShippingAssignmentInterface $shippingAssignment
+     */
+    private function updateExtensionAttributes(Quote $quote, $shippingAssignment)
+    {
+        if ($quote->getExtensionAttributes() != null)
+        {
+            $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
+
+            if ($shippingAssignmentsExtension != null)
+            {
+                $shippingAssignmentsExtension[0] = $shippingAssignment;
+            }
+        }
     }
 }

@@ -202,7 +202,7 @@ class FreeProductTest extends TestCase
         TddWizard\Catalog\ProductBuilder::aSimpleProduct()->withWebsiteIds([$websiteId])->withSku('FreeProductTest-4')->withPrice(100)->build();
         $customerFixture = new TddWizard\Customer\CustomerFixture($this->createCustomerBuilder()
             ->withAddresses(
-                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->asDefaultBilling()->asDefaultShipping())
+                TddWizard\Customer\AddressBuilder::anAddress()->withCountryId('DE')->withRegionId(null)->asDefaultBilling()->asDefaultShipping())
             ->build());
         $customerFixture->login();
         $cart = TddWizard\Checkout\CartBuilder::forCurrentSession()->withSimpleProduct('FreeProductTest-4', 2)->build();
@@ -214,7 +214,7 @@ class FreeProductTest extends TestCase
             ->withCustomerShippingAddressId($customerFixture->getDefaultShippingAddressId())
             ->placeOrder();
 
-        $this->assertEquals(200, $order->getSubtotalInclTax());
+        $this->assertEquals(0, $order->getItems()[1]->getPrice());
         $this->assertTrue($this->testHelper->getFreeproductItem($order, 'freeproduct-5') !== null, 'Order does not contain Freeproduct item');
     }
 
