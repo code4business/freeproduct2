@@ -54,7 +54,7 @@ class ResetGiftItems implements ObserverInterface
      * @param ShippingAssignmentInterface $shippingAssignment
      * @return array
      */
-    private function removeOldGiftQuoteItems($shippingAssignment): array
+    protected function removeOldGiftQuoteItems($shippingAssignment): array
     {
         $newShippingAssignment = [];
 
@@ -95,7 +95,7 @@ class ResetGiftItems implements ObserverInterface
      * @param Quote $quote
      * @param ShippingAssignmentInterface $shippingAssignment
      */
-    private function updateExtensionAttributes(Quote $quote, $shippingAssignment)
+    protected function updateExtensionAttributes(Quote $quote, $shippingAssignment)
     {
         if ($quote->getExtensionAttributes() != null)
         {

@@ -108,7 +108,7 @@ class GiftAction implements Discount\DiscountInterface
      * @param int $ruleId
      * @param Address $address
      */
-    private function addAppliedRuleId(int $ruleId, Address $address)
+    protected function addAppliedRuleId(int $ruleId, Address $address)
     {
         $appliedRules = $address->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
@@ -129,7 +129,7 @@ class GiftAction implements Discount\DiscountInterface
      * @return ProductInterface|Product
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    private function getGiftProduct(string $sku): ProductInterface
+    protected function getGiftProduct(string $sku): ProductInterface
     {
         /** @var Product $product */
         $product = $this->productRepository->get($sku);
@@ -149,7 +149,7 @@ class GiftAction implements Discount\DiscountInterface
      * @param AbstractItem $item
      * @return Discount\Data
      */
-    private function getDiscountData(AbstractItem $item): Discount\Data
+    protected function getDiscountData(AbstractItem $item): Discount\Data
     {
         return $this->discountDataFactory->create([
             'amount' => $item->getDiscountAmount(),
