@@ -17,4 +17,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
+        <plugin name="freeproduct-set-quantity" type="C4B\FreeProduct\Plugin\Quote\Model\Item\ToOrderItem\Quantity" sortOrder="10" />
+    </type>
 </config>
