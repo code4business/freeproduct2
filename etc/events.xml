@@ -3,4 +3,7 @@
     <event name="sales_quote_address_collect_totals_before">
         <observer name="Freeproduct" instance="C4B\FreeProduct\Observer\ResetGiftItems" />
     </event>
+    <event name="sales_quote_remove_item">
+        <observer name="FreeproductOnQuoteDelete" instance="C4B\FreeProduct\Observer\RemoveGiftItems" />
+    </event>
 </config>
