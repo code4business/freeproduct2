@@ -25,7 +25,9 @@ class Quantity
     public function afterConvert(Source $subject, $result)
     {
         if ($result->getData('product_type') == GiftAction::PRODUCT_TYPE_FREEPRODUCT) {
-            $result->setQtyOrdered(1);
+            if ($result->getQtyOrdered() > 1) {
+                $result->setQtyOrdered($result->getQtyOrdered() / 2);
+            }
         }
         return $result;
     }
