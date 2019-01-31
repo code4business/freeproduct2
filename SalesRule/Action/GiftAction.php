@@ -83,8 +83,11 @@ class GiftAction implements Discount\DiscountInterface
             return $this->getDiscountData($item);
         }
 
-        $sku = $rule->getData(static::RULE_DATA_KEY_SKU);
+        $skus = explode(',', $rule->getData(static::RULE_DATA_KEY_SKU));
+        $isRuleAdded = false;
 
+        foreach ($skus as $sku)
+        {
         try
         {
             $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
@@ -97,13 +100,19 @@ class GiftAction implements Discount\DiscountInterface
                 throw new \Exception($quoteItem);
             }
 
-            $this->addAppliedRuleId($rule->getRuleId(), $item->getAddress());
+                $isRuleAdded = true;
         } catch (\Exception $e)
         {
             $this->logger->error(
-                sprintf('Exception occurred while adding gift product %s to cart. Rule: %d, Exception: %s', $sku, $rule->getId(), $e->getMessage()),
+                    sprintf('Exception occurred while adding gift product %s to cart. Rule: %d, Exception: %s', implode(',', $skus), $rule->getId(), $e->getMessage()),
                 [__METHOD__]
             );
+        }
+        }
+
+        if ($isRuleAdded)
+        {
+            $this->addAppliedRuleId($rule->getRuleId(), $item->getAddress());
         }
 
         return $this->getDiscountData($item);
