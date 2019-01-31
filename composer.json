@@ -5,7 +5,7 @@
   "homepage": "https://github.com/code4business/freeproduct2",
   "require": {
     "magento/module-sales-rule": ">=100.0.0",
-    "php": ">=7.0"
+    "php": ">=7.1"
   },
   "require-dev": {
     "tddwizard/magento2-fixtures": "^0.1.0",

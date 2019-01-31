@@ -17,6 +17,13 @@ use Magento\Quote\Model\Quote;
  * - quote collect before: for normal quote operations (adding items, changing qty, removing item)
  * - address collect before: When shipping is estimated the above event is not triggered.
  *
+ * There is some weird handling of quote items. There are two ways to get them: getItems() and getItemsCollection()
+ * New quote items are added into the collection, but not into getItems. This is apparently how it should be because
+ * otherwise newly added quote items are added again since they don't have an item_id yet and in case of bundle items this would fail.
+ * So quote->setItems should not be used here:
+ *      @see \Magento\Quote\Model\QuoteRepository\SaveHandler::save
+ *      @see \Magento\Quote\Model\Quote\Item\CartItemPersister::save
+ *
  * @package    C4B_FreeProduct
  * @author     Dominik Meglič <meglic@code4business.de>
  * @copyright  code4business Software GmbH
@@ -57,14 +64,14 @@ class ResetGiftItems implements ObserverInterface
             $address = $quote->getShippingAddress();
         }
 
-        $quote->setItems($this->removeOldGiftQuoteItems($quote->getItemsCollection()));
+        $realQuoteItems = $this->removeOldGiftQuoteItems($quote->getItemsCollection());
         $this->areGiftItemsReset = true;
         $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
         $address->unsetData('cached_items_all');
 
         if ($shippingAssignment instanceof ShippingAssignmentInterface)
         {
-            $shippingAssignment->setItems($quote->getItems());
+            $shippingAssignment->setItems($realQuoteItems);
             $this->updateExtensionAttributes($quote, $shippingAssignment);
         }
     }

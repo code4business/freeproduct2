@@ -42,7 +42,7 @@ class ForeachGiftAction extends GiftAction
                                 ResetGiftItems $resetGiftItems,
                                 LoggerInterface $logger)
     {
-        parent::__construct($discountDataFactory, $productRepository, $logger);
+        parent::__construct($discountDataFactory, $productRepository, $resetGiftItems, $logger);
         $this->resetGiftItems = $resetGiftItems;
         $this->logger = $logger;
     }
@@ -87,8 +87,8 @@ class ForeachGiftAction extends GiftAction
                     sprintf('Exception occurred while adding gift product %s to cart. Rule: %d, Exception: %s', implode(',', $skus), $rule->getId(), $e->getMessage()),
                     [__METHOD__]
                 );
-                }
             }
+        }
         if ($isRuleAdded)
         {
             $this->addAppliedRuleIdToItem($rule->getRuleId(), $item);

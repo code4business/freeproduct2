@@ -88,26 +88,26 @@ class GiftAction implements Discount\DiscountInterface
 
         foreach ($skus as $sku)
         {
-        try
-        {
-            $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
-            $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
-            $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $quoteItem->getQty());
-            $this->resetGiftItems->reportGiftItemAdded();
-
-            if (is_string($quoteItem))
+            try
             {
-                throw new \Exception($quoteItem);
-            }
+                $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
+                $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
+                $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $quoteItem->getQty());
+                $this->resetGiftItems->reportGiftItemAdded();
+
+                if (is_string($quoteItem))
+                {
+                    throw new \Exception($quoteItem);
+                }
 
                 $isRuleAdded = true;
-        } catch (\Exception $e)
-        {
-            $this->logger->error(
+            } catch (\Exception $e)
+            {
+                $this->logger->error(
                     sprintf('Exception occurred while adding gift product %s to cart. Rule: %d, Exception: %s', implode(',', $skus), $rule->getId(), $e->getMessage()),
-                [__METHOD__]
-            );
-        }
+                    [__METHOD__]
+                );
+            }
         }
 
         if ($isRuleAdded)
