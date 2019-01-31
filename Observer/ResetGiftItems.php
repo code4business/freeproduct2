@@ -57,7 +57,13 @@ class ResetGiftItems implements ObserverInterface
 
         if ($shippingAssignment instanceof ShippingAssignmentInterface)
         {
+            /** @var Quote\Address $address */
             $address = $shippingAssignment->getShipping()->getAddress();
+
+            if ($address->getAddressType() != Quote\Address::ADDRESS_TYPE_SHIPPING)
+            {
+                return;
+            }
         }
         else
         {
