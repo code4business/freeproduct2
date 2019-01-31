@@ -3,6 +3,8 @@
 namespace C4B\FreeProduct\Plugin\SalesRule\Model;
 
 use C4B\FreeProduct\SalesRule\Action\GiftAction;
+use C4B\FreeProduct\SalesRule\Action\ForeachGiftAction;
+
 use \Magento\SalesRule\Model\Rule\Metadata\ValueProvider as Source;
 
 /**
@@ -27,6 +29,9 @@ class MetadataValueProvider
     {
         $resultMetadataValues['actions']['children']['simple_action']['arguments']['data']['config']['options'][] = [
             'label' => __('Add a Gift'), 'value' =>  GiftAction::ACTION
+        ];
+        $resultMetadataValues['actions']['children']['simple_action']['arguments']['data']['config']['options'][] = [
+            'label' => __('Add a Gift (For each cart item)'), 'value' =>  ForeachGiftAction::ACTION
         ];
 
         return $resultMetadataValues;

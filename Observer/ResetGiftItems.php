@@ -2,6 +2,7 @@
 
 namespace C4B\FreeProduct\Observer;
 
+use C4B\Freeproduct\SalesRule\Action\ForeachGiftAction;
 use C4B\FreeProduct\SalesRule\Action\GiftAction;
 
 use Magento\Framework\Event\Observer;
@@ -107,6 +108,7 @@ class ResetGiftItems implements ObserverInterface
                 }
             } else
             {
+                $quoteItem->unsetData(ForeachGiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
                 $realQuoteItems[$key] = $quoteItem;
             }
         }

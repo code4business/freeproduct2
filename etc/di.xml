@@ -4,6 +4,7 @@
         <arguments>
             <argument name="discountRules" xsi:type="array">
                 <item name="add_gift" xsi:type="string">C4B\FreeProduct\SalesRule\Action\GiftAction</item>
+                <item name="add_gift_foreach" xsi:type="string">C4B\FreeProduct\SalesRule\Action\ForeachGiftAction</item>
             </argument>
         </arguments>
     </type>
