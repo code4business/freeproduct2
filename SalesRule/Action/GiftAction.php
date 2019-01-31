@@ -2,6 +2,8 @@
 
 namespace C4B\FreeProduct\SalesRule\Action;
 
+use C4B\FreeProduct\Observer\ResetGiftItems;
+
 use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
@@ -15,7 +17,6 @@ use Psr\Log\LoggerInterface;
 /**
  * Handles applying a "Add a Gift" type SalesRule.
  *
- * @category   C4B
  * @package    C4B_FreeProduct
  * @author     Dominik Meglič <meglic@code4business.de>
  * @copyright  code4business Software GmbH
@@ -29,7 +30,6 @@ class GiftAction implements Discount\DiscountInterface
     const RULE_DATA_KEY_SKU = 'gift_sku';
     const PRODUCT_TYPE_FREEPRODUCT = 'freeproduct_gift';
     const APPLIED_FREEPRODUCT_RULE_IDS = '_freeproduct_applied_rules';
-
     /**
      * @var Discount\DataFactory
      */
@@ -39,25 +39,35 @@ class GiftAction implements Discount\DiscountInterface
      */
     private $productRepository;
     /**
+     * @var ResetGiftItems
+     */
+    private $resetGiftItems;
+    /**
      * @var LoggerInterface
      */
     private $logger;
 
+
     /**
      * @param Discount\DataFactory $discountDataFactory
      * @param ProductRepositoryInterface $productRepository
+     * @param ResetGiftItems $resetGiftItems
      * @param LoggerInterface $logger
      */
     public function __construct(Discount\DataFactory $discountDataFactory,
                                 ProductRepositoryInterface $productRepository,
+                                ResetGiftItems $resetGiftItems,
                                 LoggerInterface $logger)
     {
         $this->discountDataFactory = $discountDataFactory;
         $this->productRepository = $productRepository;
+        $this->resetGiftItems = $resetGiftItems;
         $this->logger = $logger;
     }
 
     /**
+     * Add gift product to quote, if not yet added
+     *
      * @param \Magento\SalesRule\Model\Rule $rule
      * @param AbstractItem $item
      * @param float $qty
@@ -78,6 +88,9 @@ class GiftAction implements Discount\DiscountInterface
         try
         {
             $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
+            $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
+            $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $quoteItem->getQty());
+            $this->resetGiftItems->reportGiftItemAdded();
 
             if (is_string($quoteItem))
             {
