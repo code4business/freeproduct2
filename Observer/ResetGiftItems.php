@@ -2,7 +2,7 @@
 
 namespace C4B\FreeProduct\Observer;
 
-use C4B\Freeproduct\SalesRule\Action\ForeachGiftAction;
+use C4B\FreeProduct\SalesRule\Action\ForeachGiftAction;
 use C4B\FreeProduct\SalesRule\Action\GiftAction;
 
 use Magento\Framework\Event\Observer;

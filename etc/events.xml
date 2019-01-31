@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
     <event name="sales_quote_collect_totals_before">
-        <observer name="Freeproduct" instance="C4B\Freeproduct\Observer\ResetGiftItems" />
+        <observer name="FreeProduct" instance="C4B\FreeProduct\Observer\ResetGiftItems" />
     </event>
 
     <event name="sales_quote_address_collect_totals_before">
-        <observer name="Freeproduct" instance="C4B\FreeProduct\Observer\ResetGiftItems" />
+        <observer name="FreeProduct" instance="C4B\FreeProduct\Observer\ResetGiftItems" />
     </event>
 
     <event name="sales_quote_remove_item">
