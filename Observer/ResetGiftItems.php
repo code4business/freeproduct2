@@ -2,6 +2,7 @@
 
 namespace C4B\FreeProduct\Observer;
 
+use C4B\FreeProduct\SalesRule\Action\ForeachGiftAction;
 use C4B\FreeProduct\SalesRule\Action\GiftAction;
 
 use Magento\Framework\Event\Observer;
@@ -10,9 +11,19 @@ use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
 
 /**
- * Observer for resetting gift cart items
+ * Observer for resetting gift cart items.
+ * When quote totals are collected, all gifts are removed and are later re-added by Discount total collector.
+ * It is triggered by two events:
+ * - quote collect before: for normal quote operations (adding items, changing qty, removing item)
+ * - address collect before: When shipping is estimated the above event is not triggered.
  *
- * @category   C4B
+ * There is some weird handling of quote items. There are two ways to get them: getItems() and getItemsCollection()
+ * New quote items are added into the collection, but not into getItems. This is apparently how it should be because
+ * otherwise newly added quote items are added again since they don't have an item_id yet and in case of bundle items this would fail.
+ * So quote->setItems should not be used here:
+ *      @see \Magento\Quote\Model\QuoteRepository\SaveHandler::save
+ *      @see \Magento\Quote\Model\Quote\Item\CartItemPersister::save
+ *
  * @package    C4B_FreeProduct
  * @author     Dominik Meglič <meglic@code4business.de>
  * @copyright  code4business Software GmbH
@@ -21,45 +32,77 @@ use Magento\Quote\Model\Quote;
 class ResetGiftItems implements ObserverInterface
 {
     /**
-     * Delete all gift items. They will be re-added by SalesRule (If possible).
-     *
+     * @var bool
+     */
+    private $areGiftItemsReset = false;
+
+    /**
+     * @event sales_quote_collect_totals_before
      * @event sales_quote_address_collect_totals_before
      * @param Observer $observer
      * @return void
+     * @throws \Exception
      */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+    public function execute(Observer $observer)
     {
-        /** @var ShippingAssignmentInterface $shippingAssignment */
-        $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
         /** @var Quote $quote */
         $quote = $observer->getEvent()->getData('quote');
-        /** @var Quote\Address $address */
-        $address = $shippingAssignment->getShipping()->getAddress();
+        /** @var ShippingAssignmentInterface $shippingAssignment */
+        $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
 
-        if ($shippingAssignment->getItems() == null || $address->getAddressType() != Quote\Address::TYPE_SHIPPING)
+        if ($quote->getItems() == null || $this->areGiftItemsReset)
         {
             return;
         }
 
-        $newShippingAssignmentItems = $this->removeOldGiftQuoteItems($shippingAssignment);
+        if ($shippingAssignment instanceof ShippingAssignmentInterface)
+        {
+            /** @var Quote\Address $address */
+            $address = $shippingAssignment->getShipping()->getAddress();
 
-        $shippingAssignment->setItems($newShippingAssignmentItems);
+            if ($address->getAddressType() != Quote\Address::ADDRESS_TYPE_SHIPPING)
+            {
+                return;
+            }
+        }
+        else
+        {
+            $address = $quote->getShippingAddress();
+        }
+
+        $realQuoteItems = $this->removeOldGiftQuoteItems($quote->getItemsCollection());
+        $this->areGiftItemsReset = true;
         $address->unsetData(GiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
         $address->unsetData('cached_items_all');
 
-        $this->updateExtensionAttributes($quote, $shippingAssignment);
+        if ($shippingAssignment instanceof ShippingAssignmentInterface)
+        {
+            $shippingAssignment->setItems($realQuoteItems);
+            $this->updateExtensionAttributes($quote, $shippingAssignment);
+        }
     }
 
     /**
-     * @param ShippingAssignmentInterface $shippingAssignment
-     * @return array
+     * A new gift item was added so if cart totals are collected again, all gift items will be reset.
+     *
+     * @return void
      */
-    protected function removeOldGiftQuoteItems($shippingAssignment): array
+    public function reportGiftItemAdded()
     {
-        $newShippingAssignment = [];
+        $this->areGiftItemsReset = false;
+    }
+
+    /**
+     * @param \Magento\Quote\Model\ResourceModel\Quote\Item\Collection|\Magento\Framework\Data\Collection $quoteItemsCollection
+     * @return Quote\Item[]
+     * @throws \Exception
+     */
+    protected function removeOldGiftQuoteItems($quoteItemsCollection)
+    {
+        $realQuoteItems = [];
 
         /** @var Quote\Item $quoteItem */
-        foreach ($shippingAssignment->getItems() as $quoteItem)
+        foreach ($quoteItemsCollection->getItems() as $key => $quoteItem)
         {
             if ($quoteItem->isDeleted())
             {
@@ -78,15 +121,12 @@ class ResetGiftItems implements ObserverInterface
                 }
             } else
             {
-                /**
-                 * Reset shipping assignment to prevent others from working on old items
-                 * @see \Magento\Tax\Model\Sales\Total\Quote\CommonTaxCollector::processAppliedTaxes
-                 * @see \Magento\Tax\Model\Plugin\OrderSave::saveOrderTax
-                 */
-                $newShippingAssignment[] = $quoteItem;
+                $quoteItem->unsetData(ForeachGiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
+                $realQuoteItems[$key] = $quoteItem;
             }
         }
-        return $newShippingAssignment;
+
+        return $realQuoteItems;
     }
 
     /**

@@ -3,41 +3,24 @@
 namespace C4B\FreeProduct\SalesRule\Action;
 
 use C4B\FreeProduct\Observer\ResetGiftItems;
-
-use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Catalog\Model\Product;
-use Magento\Quote\Api\Data\CartItemInterface;
-use Magento\Quote\Model\Quote\Address;
+use Magento\Customer\Model\Address;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\SalesRule\Model\Rule\Action\Discount;
-
 use Psr\Log\LoggerInterface;
 
 /**
- * Handles applying a "Add a Gift" type SalesRule.
+ * Adds a gift for each cart item that meets criteria. It is also multiplied by the qty of said cart item.
+ * Ex. Add one gift for each product from category Sales.
  *
  * @package    C4B_FreeProduct
  * @author     Dominik Meglič <meglic@code4business.de>
  * @copyright  code4business Software GmbH
  * @license    http://opensource.org/licenses/osl-3.0.php
  */
-class GiftAction implements Discount\DiscountInterface
+class ForeachGiftAction extends GiftAction
 {
-    const ACTION = 'add_gift';
-
-    const ITEM_OPTION_UNIQUE_ID = 'freeproduct_gift_unique_id';
-    const RULE_DATA_KEY_SKU = 'gift_sku';
-    const PRODUCT_TYPE_FREEPRODUCT = 'freeproduct_gift';
-    const APPLIED_FREEPRODUCT_RULE_IDS = '_freeproduct_applied_rules';
-    /**
-     * @var Discount\DataFactory
-     */
-    private $discountDataFactory;
-    /**
-     * @var ProductRepositoryInterface
-     */
-    private $productRepository;
+    const ACTION = 'add_gift_foreach';
     /**
      * @var ResetGiftItems
      */
@@ -59,15 +42,12 @@ class GiftAction implements Discount\DiscountInterface
                                 ResetGiftItems $resetGiftItems,
                                 LoggerInterface $logger)
     {
-        $this->discountDataFactory = $discountDataFactory;
-        $this->productRepository = $productRepository;
+        parent::__construct($discountDataFactory, $productRepository, $resetGiftItems, $logger);
         $this->resetGiftItems = $resetGiftItems;
         $this->logger = $logger;
     }
 
     /**
-     * Add gift product to quote, if not yet added
-     *
      * @param \Magento\SalesRule\Model\Rule $rule
      * @param AbstractItem $item
      * @param float $qty
@@ -75,7 +55,7 @@ class GiftAction implements Discount\DiscountInterface
      */
     public function calculate($rule, $item, $qty)
     {
-        $appliedRuleIds = $item->getAddress()->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
+        $appliedRuleIds = $item->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
         if ($item->getAddress()->getAddressType() != Address::TYPE_SHIPPING
             || ($appliedRuleIds != null && isset($appliedRuleIds[$rule->getId()])))
@@ -90,7 +70,7 @@ class GiftAction implements Discount\DiscountInterface
         {
             try
             {
-                $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
+                $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount() * $qty);
                 $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
                 $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $quoteItem->getQty());
                 $this->resetGiftItems->reportGiftItemAdded();
@@ -109,30 +89,21 @@ class GiftAction implements Discount\DiscountInterface
                 );
             }
         }
-
         if ($isRuleAdded)
         {
-            $this->addAppliedRuleId($rule->getRuleId(), $item->getAddress());
+            $this->addAppliedRuleIdToItem($rule->getRuleId(), $item);
         }
 
         return $this->getDiscountData($item);
     }
 
     /**
-     * @inheritdoc
-     */
-    public function fixQuantity($qty, $rule)
-    {
-        return $qty;
-    }
-
-    /**
      * @param int $ruleId
-     * @param Address $address
+     * @param AbstractItem $quoteItem
      */
-    protected function addAppliedRuleId(int $ruleId, Address $address)
+    protected function addAppliedRuleIdToItem(int $ruleId, AbstractItem $quoteItem)
     {
-        $appliedRules = $address->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
+        $appliedRules = $quoteItem->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
         if ($appliedRules == null)
         {
@@ -141,43 +112,6 @@ class GiftAction implements Discount\DiscountInterface
 
         $appliedRules[$ruleId] = $ruleId;
 
-        $address->setData(static::APPLIED_FREEPRODUCT_RULE_IDS, $appliedRules);
-    }
-
-    /**
-     * Get and prepare the gift product
-     *
-     * @param string $sku
-     * @return ProductInterface|Product
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    protected function getGiftProduct(string $sku): ProductInterface
-    {
-        /** @var Product $product */
-        $product = $this->productRepository->get($sku);
-        /**
-         * Makes it unique, to avoid merging
-         * @see \Magento\Quote\Model\Quote\Item::representProduct
-         */
-        $product->addCustomOption(static::ITEM_OPTION_UNIQUE_ID, uniqid());
-        $product->addCustomOption(CartItemInterface::KEY_PRODUCT_TYPE, static::PRODUCT_TYPE_FREEPRODUCT);
-
-        return $product;
-    }
-
-    /**
-     * No discount is changed by GiftAction, but the existing has to be preserved
-     *
-     * @param AbstractItem $item
-     * @return Discount\Data
-     */
-    protected function getDiscountData(AbstractItem $item): Discount\Data
-    {
-        return $this->discountDataFactory->create([
-            'amount' => $item->getDiscountAmount(),
-            'baseAmount' => $item->getBaseDiscountAmount(),
-            'originalAmount' => $item->getOriginalDiscountAmount(),
-            'baseOriginalAmount' => $item->getBaseOriginalDiscountAmount()
-        ]);
+        $quoteItem->setData(static::APPLIED_FREEPRODUCT_RULE_IDS, $appliedRules);
     }
 }

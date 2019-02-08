@@ -34,7 +34,7 @@ class RemoveGiftItems implements ObserverInterface
     /**
      * Delete all gift items. They will be re-added by SalesRule (If possible).
      *
-     * @event sales_quote_address_collect_totals_before
+     * @event sales_quote_remove_item
      * @param Observer $observer
      * @return void
      */

@@ -8,7 +8,7 @@ The development and the function of the original Magento1 extension is described
 
 Requirements
 -------
-- PHP >= 7.0.0
+- PHP >= 7.1
 - Magento >= 2.2
 
 Supported Product Types
@@ -35,8 +35,13 @@ Configuration
 -------
 Sales rules for carts are configured in _Marketing->Cart Price Rules_:  
 - In the Actions tab, the Apply field should be set to Add a Gift
-- Gift SKU: Product that will be added. Only simple and virtual products without (required) custom options are supported
-- Discount Amount: The qty of added gifts
+- Gift SKU: Product that will be added. Only simple and virtual products without (required) custom options are supported. Multiple comma-separated SKUs can be specified
+- Discount Amount: The qty of added gifts  
+- The gift item is added once for the whole cart
+
+Action **Add a Gift (for each cart item)** works similarly but will add the gift item for each product in cart. The qty of said product is also taken into consideration.  
+
+This action usually needs conditions to match only specific items *(Apply the rule only to cart items matching the following conditions)*.   
 
 Limitations:
 -------
