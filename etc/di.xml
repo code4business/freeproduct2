@@ -18,4 +18,8 @@
             </argument>
         </arguments>
     </type>
+
+    <!-- Add Not Visible Individually item to minicart -->
+    <preference for="\Magento\Checkout\CustomerData\Cart" type="\C4B\FreeProduct\Plugin\CustomerData\Cart" />
+
 </config>
