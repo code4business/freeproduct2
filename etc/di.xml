@@ -18,4 +18,8 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Magento\Quote\Model\QuoteManagement">
+        <plugin name="freeproduct_save_quote_before_submit" type="C4B\FreeProduct\Plugin\Quote\Model\QuoteManagement" sortOrder="10" />
+    </type>
 </config>
