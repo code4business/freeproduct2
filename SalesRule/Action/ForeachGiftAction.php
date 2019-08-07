@@ -92,6 +92,7 @@ class ForeachGiftAction extends GiftAction
         if ($isRuleAdded)
         {
             $this->addAppliedRuleIdToItem($rule->getRuleId(), $item);
+            $this->resetQuoteItemsCollection($item->getQuote());
         }
 
         return $this->getDiscountData($item);

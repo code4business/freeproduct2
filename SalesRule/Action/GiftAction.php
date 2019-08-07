@@ -9,6 +9,7 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Address;
+use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
 use Magento\SalesRule\Model\Rule\Action\Discount;
 
@@ -113,6 +114,7 @@ class GiftAction implements Discount\DiscountInterface
         if ($isRuleAdded)
         {
             $this->addAppliedRuleId($rule->getRuleId(), $item->getAddress());
+            $this->resetQuoteItemsCollection($item->getQuote());
         }
 
         return $this->getDiscountData($item);
@@ -179,5 +181,26 @@ class GiftAction implements Discount\DiscountInterface
             'originalAmount' => $item->getOriginalDiscountAmount(),
             'baseOriginalAmount' => $item->getBaseOriginalDiscountAmount()
         ]);
+    }
+
+    /**
+     * Reset quote items from collection to avoid using old objects in other places.
+     * Quote::getItems and Quote::getItemsCollection are not using the same source
+     *
+     * @param Quote $quote
+     */
+    protected function resetQuoteItemsCollection(Quote $quote): void
+    {
+        $quote->setItems($quote->getItemsCollection()->getItems());
+
+        if ($quote->getExtensionAttributes() != null)
+        {
+            $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
+
+            if ($shippingAssignmentsExtension != null)
+            {
+                $shippingAssignmentsExtension[0]->setItems($quote->getItems());
+            }
+        }
     }
 }
