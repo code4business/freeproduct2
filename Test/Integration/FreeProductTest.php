@@ -57,14 +57,23 @@ class FreeProductTest extends TestCase
         $this->testHelper->createSalesRule([
             'name' => 'Free gift over 100€',
             'coupon_type' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON,
-            'conditions' => [
-                [
-                    'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
-                    'attribute' => 'base_subtotal',
-                    'operator' => '>',
-                    'value' => 100
+            'conditions_serialized' => json_encode([
+                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
+                'attribute' => null,
+                'operator' => null,
+                'value' => '1',
+                'is_value_processed' => false,
+                'aggregator' => 'all',
+                'conditions' => [
+                    [
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
+                        'attribute' => 'base_subtotal',
+                        'operator' => '>',
+                        'value' => 100,
+                        'is_value_processed' => false
+                    ]
                 ]
-            ],
+            ]),
             'discount_amount' => 2,
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-1'
         ]);
@@ -93,14 +102,23 @@ class FreeProductTest extends TestCase
         $this->testHelper->createSalesRule([
             'name' => 'Free gift over 400€',
             'coupon_type' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON,
-            'conditions' => [
-                [
-                    'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
-                    'attribute' => 'base_subtotal',
-                    'operator' => '>',
-                    'value' => 399
+            'conditions_serialized' => json_encode([
+                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
+                'attribute' => null,
+                'operator' => null,
+                'value' => '1',
+                'is_value_processed' => false,
+                'aggregator' => 'all',
+                'conditions' => [
+                    [
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
+                        'attribute' => 'base_subtotal',
+                        'operator' => '>',
+                        'value' => 399,
+                        'is_value_processed' => false
+                    ]
                 ]
-            ],
+            ]),
             'discount_amount' => 1,
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-2'
         ]);
@@ -131,14 +149,23 @@ class FreeProductTest extends TestCase
         $this->testHelper->createSalesRule([
             'name' => 'Free gift 1',
             'coupon_type' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON,
-            'conditions' => [
-                [
-                    'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
-                    'attribute' => 'base_subtotal',
-                    'operator' => '>',
-                    'value' => 50
+            'conditions_serialized' => json_encode([
+                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
+                'attribute' => null,
+                'operator' => null,
+                'value' => '1',
+                'is_value_processed' => false,
+                'aggregator' => 'all',
+                'conditions' => [
+                    [
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
+                        'attribute' => 'base_subtotal',
+                        'operator' => '>',
+                        'value' => 50,
+                        'is_value_processed' => false
+                    ]
                 ]
-            ],
+            ]),
             'discount_amount' => 1,
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-3'
         ]);
@@ -146,14 +173,23 @@ class FreeProductTest extends TestCase
         $this->testHelper->createSalesRule([
             'name' => 'Free gift 2',
             'coupon_type' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON,
-            'conditions' => [
-                [
-                    'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
-                    'attribute' => 'base_subtotal',
-                    'operator' => '>',
-                    'value' => 50
+            'conditions_serialized' => json_encode([
+                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
+                'attribute' => null,
+                'operator' => null,
+                'value' => '1',
+                'is_value_processed' => false,
+                'aggregator' => 'all',
+                'conditions' => [
+                    [
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
+                        'attribute' => 'base_subtotal',
+                        'operator' => '>',
+                        'value' => 50,
+                        'is_value_processed' => false
+                    ]
                 ]
-            ],
+            ]),
             'discount_amount' => 1,
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-4'
         ]);
@@ -185,14 +221,23 @@ class FreeProductTest extends TestCase
         $this->testHelper->createSalesRule([
             'name' => 'Free gift 3',
             'coupon_type' => \Magento\SalesRule\Model\Rule::COUPON_TYPE_NO_COUPON,
-            'conditions' => [
-                [
-                    'type' => 'Magento\SalesRule\Model\Rule\Condition\Address',
-                    'attribute' => 'base_subtotal',
-                    'operator' => '>',
-                    'value' => 50
+            'conditions_serialized' => json_encode([
+                'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Combine',
+                'attribute' => null,
+                'operator' => null,
+                'value' => '1',
+                'is_value_processed' => false,
+                'aggregator' => 'all',
+                'conditions' => [
+                    [
+                        'type' => 'Magento\\SalesRule\\Model\\Rule\\Condition\\Address',
+                        'attribute' => 'base_subtotal',
+                        'operator' => '>',
+                        'value' => 50,
+                        'is_value_processed' => false
+                    ]
                 ]
-            ],
+            ]),
             'discount_amount' => 1,
             GiftAction::RULE_DATA_KEY_SKU => 'freeproduct-5'
         ]);

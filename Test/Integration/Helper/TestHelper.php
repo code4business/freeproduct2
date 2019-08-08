@@ -95,6 +95,18 @@ class TestHelper
                 $freeproductItem = $item;
                 break;
             }
+
+            if ($item instanceof Order\Item)
+            {
+                $productOptions = $item->getProductOptions();
+                $productType = $productOptions['super_product_config']['product_type'] ?? null;
+
+                if ($productType == GiftAction::PRODUCT_TYPE_FREEPRODUCT)
+                {
+                    $freeproductItem = $item;
+                    break;
+                }
+            }
         }
 
         return $freeproductItem;
