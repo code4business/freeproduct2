@@ -93,7 +93,7 @@ class GiftAction implements Discount\DiscountInterface
             {
                 $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $rule->getDiscountAmount());
                 $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
-                $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $quoteItem->getQty());
+                $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $rule->getDiscountAmount());
                 $this->resetGiftItems->reportGiftItemAdded();
 
                 if (is_string($quoteItem))
