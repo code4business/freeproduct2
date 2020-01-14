@@ -47,6 +47,7 @@ Limitations:
 -------
 - Gift products are added during discount total processing, after subtotal and shipping totals. Because of that gift products will not be included in any shipping calculations.
 - Only simple and virtual products without required custom options are supported.
+- Multishipping checkout is not supported
 
 Current localizations:
 -------
