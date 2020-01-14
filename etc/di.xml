@@ -1,5 +1,6 @@
 <?xml version="1.0"?>
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Add new sales rule types -->
     <type name="Magento\SalesRule\Model\Rule\Action\Discount\CalculatorFactory">
         <arguments>
             <argument name="discountRules" xsi:type="array">
@@ -9,6 +10,7 @@
         </arguments>
     </type>
 
+    <!-- Validator to exclude gift items from being processed by sales rules -->
     <type name="Magento\SalesRule\Model\Validator\Pool">
         <arguments>
             <argument name="validators" xsi:type="array">
@@ -19,7 +21,15 @@
         </arguments>
     </type>
 
+    <!-- Set product type back to real type for order_item -->
     <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
         <plugin name="freeproduct_reset_product_type" type="C4B\FreeProduct\Plugin\Quote\ResetProductType" sortOrder="50" />
+    </type>
+
+    <!-- Get own instance of product repository to avoid merging custom options if gift product appears as real item in cart -->
+    <type name="C4B\FreeProduct\SalesRule\Action\AbstractGiftAction">
+        <arguments>
+            <argument name="productRepository" xsi:type="object" shared="false">Magento\Catalog\Api\ProductRepositoryInterface</argument>
+        </arguments>
     </type>
 </config>
