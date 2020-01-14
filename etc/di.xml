@@ -19,15 +19,7 @@
         </arguments>
     </type>
 
-    <type name="Magento\Quote\Model\QuoteManagement">
-        <plugin name="freeproduct_save_quote_before_submit" type="C4B\FreeProduct\Plugin\Quote\Model\QuoteManagement" sortOrder="10" />
-    </type>
-
     <type name="Magento\Quote\Model\Quote\Item\ToOrderItem">
         <plugin name="freeproduct_reset_product_type" type="C4B\FreeProduct\Plugin\Quote\ResetProductType" sortOrder="50" />
-    </type>
-
-    <type name="Klarna\Core\Api\BuilderInterface">
-        <plugin sortOrder="10" name="freeproduct_save_quote_after_klarna_totals_recollect" type="C4B\FreeProduct\Plugin\KlarnaPayments\Api\Builder" />
     </type>
 </config>

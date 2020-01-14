@@ -9,6 +9,7 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Quote\Api\Data\ShippingAssignmentInterface;
 use Magento\Quote\Model\Quote;
+use Magento\Quote\Model\ResourceModel\Quote\Item as QuoteItemResourceModel;
 
 /**
  * Observer for resetting gift cart items.
@@ -35,6 +36,18 @@ class ResetGiftItems implements ObserverInterface
      * @var bool
      */
     private $areGiftItemsReset = false;
+    /**
+     * @var QuoteItemResourceModel
+     */
+    private $quoteItemRm;
+
+    /**
+     * @param QuoteItemResourceModel $quoteItemRm
+     */
+    public function __construct(QuoteItemResourceModel $quoteItemRm)
+    {
+        $this->quoteItemRm = $quoteItemRm;
+    }
 
     /**
      * @event sales_quote_collect_totals_before
@@ -95,6 +108,7 @@ class ResetGiftItems implements ObserverInterface
     /**
      * @param Quote $quote
      * @return Quote\Item[]
+     * @throws \Exception
      */
     protected function removeOldGiftQuoteItems(Quote $quote)
     {
@@ -109,17 +123,10 @@ class ResetGiftItems implements ObserverInterface
                 continue;
             } else if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option)
             {
-                $quoteItem->isDeleted(true);
+                // delete individually here otherwise they stay in the quote
+                $this->quoteItemRm->delete($quoteItem);
                 $deletedItemsIds[$quoteItem->getItemId()] = $quoteItem->getItemId();
 
-                /**
-                 * In some cases when the quoteItem is being deleted its option will be saved. It will fail because item_id
-                 * is null.
-                 */
-                foreach ($quoteItem->getOptions() as $option)
-                {
-                    $option->isDeleted(true);
-                }
             } else
             {
                 $quoteItem->unsetData(ForeachGiftAction::APPLIED_FREEPRODUCT_RULE_IDS);

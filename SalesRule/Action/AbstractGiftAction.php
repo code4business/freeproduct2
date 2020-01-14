@@ -12,6 +12,7 @@ use Magento\Quote\Api\Data\CartItemInterface;
 use Magento\Quote\Model\Quote\Address;
 use Magento\Quote\Model\Quote;
 use Magento\Quote\Model\Quote\Item\AbstractItem;
+use Magento\Quote\Model\ResourceModel\Quote\Item as QuoteItemResourceModel;
 use Magento\SalesRule\Model\Rule;
 use Magento\SalesRule\Model\Rule\Action\Discount;
 
@@ -47,6 +48,10 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
      * @var LoggerInterface
      */
     protected $logger;
+    /**
+     * @var QuoteItemResourceModel
+     */
+    private $quoteItemRm;
 
 
     /**
@@ -54,16 +59,19 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
      * @param ProductRepositoryInterface $productRepository
      * @param ResetGiftItems $resetGiftItems
      * @param LoggerInterface $logger
+     * @param QuoteItemResourceModel $quoteItemRm
      */
     public function __construct(Discount\DataFactory $discountDataFactory,
                                 ProductRepositoryInterface $productRepository,
                                 ResetGiftItems $resetGiftItems,
-                                LoggerInterface $logger)
+                                LoggerInterface $logger,
+                                QuoteItemResourceModel $quoteItemRm)
     {
         $this->discountDataFactory = $discountDataFactory;
         $this->productRepository = $productRepository;
         $this->resetGiftItems = $resetGiftItems;
         $this->logger = $logger;
+        $this->quoteItemRm = $quoteItemRm;
     }
 
     /**
@@ -91,7 +99,13 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
             try
             {
                 $giftQty = $this->getGiftQty($item, $rule, $qty);
+
                 $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $giftQty);
+                $quoteItem->setCustomPrice(0);
+                $quoteItem->setOriginalCustomPrice(0);
+                // Save individually here, to obtain an ID. Otherwise more problems arise depending on how collectTotals is called and where
+                $this->quoteItemRm->save($quoteItem);
+
                 $item->getQuote()->setItemsCount($item->getQuote()->getItemsCount() + 1);
                 $item->getQuote()->setItemsQty((float)$item->getQuote()->getItemsQty() + $giftQty);
                 $this->resetGiftItems->reportGiftItemAdded();
