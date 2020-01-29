@@ -127,6 +127,15 @@ class ResetGiftItems implements ObserverInterface
                 $this->quoteItemRm->delete($quoteItem);
                 $deletedItemsIds[$quoteItem->getItemId()] = $quoteItem->getItemId();
 
+                /**
+                 * In some cases when the quoteItem is being deleted its option will be saved. It will fail because item_id
+                 * is null.
+                 */
+                foreach ($quoteItem->getOptions() as $option)
+                {
+                    $option->isDeleted(true);
+                }
+
             } else
             {
                 $quoteItem->unsetData(ForeachGiftAction::APPLIED_FREEPRODUCT_RULE_IDS);
