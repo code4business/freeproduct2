@@ -103,6 +103,8 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
                 $quoteItem = $item->getQuote()->addProduct($this->getGiftProduct($sku), $giftQty);
                 $quoteItem->setCustomPrice(0);
                 $quoteItem->setOriginalCustomPrice(0);
+                $quoteItem->setPrice(0);
+
                 if ($item->getQuote()->getId() != null)
                 {
                     // Save individually here, to obtain an ID. Otherwise more problems arise depending on how collectTotals is called and where
