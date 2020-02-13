@@ -56,6 +56,7 @@ Current localizations:
 - fr_FR
 - nl_NL
 - pt_PT
+- pt_BR
 - sl_SI
 
 License
