@@ -88,6 +88,7 @@ class FreeProductTest extends TestCase
 
         $this->assertTrue($freeproductItem !== null, 'Quote does not contain Freeproduct item');
         $this->assertEquals(0, $freeproductItem->getPrice(), 'Price is not zero');
+        $this->assertEquals(50, $freeproductItem->getOriginalPrice(), 'Custom Price is not preserved');
         $this->assertEquals(2, $freeproductItem->getQty(), 'Incorrect gift count was added.');
     }
 
