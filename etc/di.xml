@@ -30,4 +30,7 @@
     <type name="Klarna\Core\Api\BuilderInterface">
         <plugin sortOrder="10" name="freeproduct_save_quote_after_klarna_totals_recollect" type="C4B\FreeProduct\Plugin\KlarnaPayments\Api\Builder" />
     </type>
+    <type name="Magento\Quote\Model\Quote\Item\AbstractItem">
+        <plugin sortOrder="1" name="freeproduct_add_original_price" type="C4B\FreeProduct\Plugin\Model\Quote\Item\AbstractItem"/>
+    </type>
 </config>
