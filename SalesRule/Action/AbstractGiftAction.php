@@ -148,9 +148,22 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
         $appliedRuleIds = $stateObject->getData(static::APPLIED_FREEPRODUCT_RULE_IDS) ?? [];
 
         return (
-            $item->getAddress()->getAddressType() == Address::TYPE_SHIPPING &&
+            $this->isValidAddressType($item) &&
             isset($appliedRuleIds[$rule->getId()]) == false
         );
+    }
+
+    /**
+     * @param Quote\Item|AbstractItem $item
+     * @return bool
+     */
+    protected function isValidAddressType($item)
+    {
+        if ($item->getQuote()->isVirtual()) {
+            return $item->getAddress()->getAddressType() === Address::TYPE_BILLING;
+        } else {
+            return $item->getAddress()->getAddressType() === Address::TYPE_SHIPPING;
+        }
     }
 
     /**
