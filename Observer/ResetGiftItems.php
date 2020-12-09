@@ -60,13 +60,18 @@ class ResetGiftItems implements ObserverInterface
             /** @var Quote\Address $address */
             $address = $shippingAssignment->getShipping()->getAddress();
 
-            if ($address->getAddressType() != Quote\Address::ADDRESS_TYPE_SHIPPING)
+            if (($quote->isVirtual() && $address->getAddressType() !== Quote\Address::ADDRESS_TYPE_BILLING)
+                || (!$quote->isVirtual() && $address->getAddressType() !== Quote\Address::ADDRESS_TYPE_SHIPPING))
             {
                 return;
             }
         } else
         {
-            $address = $quote->getShippingAddress();
+            if ($quote->isVirtual()) {
+                $address = $quote->getBillingAddress();
+            } else {
+                $address = $quote->getShippingAddress();
+            }
         }
 
         $realQuoteItems = $this->removeOldGiftQuoteItems($quote);
