@@ -50,6 +50,11 @@ class ResetGiftItems implements ObserverInterface
         /** @var ShippingAssignmentInterface $shippingAssignment */
         $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
 
+        // In admin the quote items are empty although items exist
+        if ((int)$quote->getItemsCount() > 0 && $quote->getItems() == null) {
+            $quote->setItems($quote->getItemsCollection()->getItems());
+        }
+
         if ($quote->getItems() == null || $this->areGiftItemsReset)
         {
             return;
