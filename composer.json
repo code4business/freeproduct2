@@ -12,14 +12,13 @@
     "phpunit/phpunit": "~6.2.0"
   },
   "type": "magento2-module",
-  "version": "1.2.9",
   "license": [
     "OSL-3.0"
   ],
   "authors": [
     {
       "name": "Dominik Meglič",
-      "email": "meglic@code4business.de"
+      "email": "dominik.meglic@y1.de"
     }
   ],
   "autoload": {
