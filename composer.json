@@ -4,12 +4,8 @@
   "keywords": ["magento2","gift sales rule"],
   "homepage": "https://github.com/code4business/freeproduct2",
   "require": {
-    "magento/module-sales-rule": ">=100.0.0",
-    "php": ">=7.1"
-  },
-  "require-dev": {
-    "tddwizard/magento2-fixtures": "^0.1.0",
-    "phpunit/phpunit": "~6.2.0"
+    "magento/module-sales-rule": "^101.2.3",
+    "php": "~7.1 || ~8.1"
   },
   "type": "magento2-module",
   "license": [

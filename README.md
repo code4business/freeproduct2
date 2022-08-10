@@ -8,8 +8,10 @@ The development and the function of the original Magento1 extension is described
 
 Requirements
 -------
-- PHP >= 7.1
-- Magento >= 2.2
+- PHP 7.4, 8.1
+- Magento >= 2.4.3-p1
+
+Generally the last full release -1 version is tested and made to work. Older versions are not actively supported.
 
 Supported Product Types
 -------
@@ -17,7 +19,6 @@ The extension only supports simple and virtual product types, other types or cus
 
 Instalation
 -------
-### Via composer (recommended)
 Go to the Magento 2 root directory and run the following commands in the shell:
 ```
 composer require code4business/freeproduct2
@@ -25,12 +26,6 @@ bin/magento module:enable C4B_FreeProduct
 bin/magento setup:upgrade
 ```
 
-### Manually
-Create the directory `app/code/C4B/FreeProduct` and copy the all the files from this repository into it. Then run:
-```
-bin/magento module:enable C4B_FreeProduct
-bin/magento setup:upgrade
-```
 Configuration
 -------
 Sales rules for carts are configured in _Marketing->Cart Price Rules_:  
