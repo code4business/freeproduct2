@@ -3,4 +3,10 @@
     <type name="Magento\SalesRule\Model\Rule\Metadata\ValueProvider">
         <plugin name="FreeProduct" type="C4B\FreeProduct\Plugin\SalesRule\Model\MetadataValueProvider" sortOrder="10" />
     </type>
+
+    <type name="C4B\FreeProduct\Observer\ResetGiftItems">
+        <arguments>
+            <argument name="isAdminContext" xsi:type="boolean">true</argument>
+        </arguments>
+    </type>
 </config>

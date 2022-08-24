@@ -37,6 +37,16 @@ class ResetGiftItems implements ObserverInterface
     private $areGiftItemsReset = false;
 
     /**
+     * @var bool
+     */
+    private $isAdminContext = false;
+
+    public function __construct(bool $isAdminContext = false)
+    {
+        $this->isAdminContext = $isAdminContext;
+    }
+
+    /**
      * @event sales_quote_collect_totals_before
      * @event sales_quote_address_collect_totals_before
      * @param Observer $observer
@@ -51,8 +61,10 @@ class ResetGiftItems implements ObserverInterface
         $shippingAssignment = $observer->getEvent()->getData('shipping_assignment');
 
         // In admin the quote items are empty although items exist
-        if ((int)$quote->getItemsCount() > 0 && $quote->getItems() == null) {
-            $quote->setItems($quote->getItemsCollection()->getItems());
+        if ($this->isAdminContext) {
+            if ((int)$quote->getItemsCount() > 0 && $quote->getItems() == null) {
+                $quote->setItems($quote->getItemsCollection()->getItems());
+            }
         }
 
         if ($quote->getItems() == null || $this->areGiftItemsReset)
