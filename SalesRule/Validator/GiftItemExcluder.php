@@ -13,7 +13,7 @@ use C4B\FreeProduct\SalesRule\Action\GiftAction;
  * @copyright  code4business Software GmbH
  * @license    http://opensource.org/licenses/osl-3.0.php
  */
-class GiftItemExcluder implements \Zend_Validate_Interface
+class GiftItemExcluder implements \Laminas\Filter\FilterInterface
 {
     /**
      * Gift items should not be processed by SalesRules
