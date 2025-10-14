@@ -206,7 +206,7 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
     protected function getGiftProduct(string $sku): ProductInterface
     {
         /** @var Product $product */
-        $product = $this->productRepository->get($sku);
+        $product = $this->productRepository->get($sku, false, null, true);
         /**
          * Makes it unique, to avoid merging
          * @see \Magento\Quote\Model\Quote\Item::representProduct
