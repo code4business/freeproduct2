@@ -62,12 +62,12 @@ class ResetGiftItems implements ObserverInterface
 
         // In admin the quote items are empty although items exist
         if ($this->isAdminContext) {
-            if ((int)$quote->getItemsCount() > 0 && $quote->getItems() == null) {
+            if ((int)$quote->getItemsCount() > 0 && $quote->getItems() === null) {
                 $quote->setItems($quote->getItemsCollection()->getItems());
             }
         }
 
-        if ($quote->getItems() == null || $this->areGiftItemsReset)
+        if ($quote->getItems() === null || $this->areGiftItemsReset)
         {
             return;
         }
@@ -161,13 +161,13 @@ class ResetGiftItems implements ObserverInterface
      * @param Quote $quote
      * @param ShippingAssignmentInterface $shippingAssignment
      */
-    protected function updateExtensionAttributes(Quote $quote, $shippingAssignment)
+    protected function updateExtensionAttributes(Quote $quote, ShippingAssignmentInterface $shippingAssignment): void
     {
-        if ($quote->getExtensionAttributes() != null)
+        if ($quote->getExtensionAttributes() !== null)
         {
             $shippingAssignmentsExtension = $quote->getExtensionAttributes()->getShippingAssignments();
 
-            if ($shippingAssignmentsExtension != null)
+            if ($shippingAssignmentsExtension !== null)
             {
                 $shippingAssignmentsExtension[0] = $shippingAssignment;
             }
@@ -231,7 +231,7 @@ class ResetGiftItems implements ObserverInterface
 
         foreach ($items as $quoteItem)
         {
-            if (isset($itemsToRemove[$quoteItem->getItemId()]) == false)
+            if (!isset($itemsToRemove[$quoteItem->getItemId()]))
             {
                 $filteredItems[] = $quoteItem;
             }

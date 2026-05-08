@@ -44,8 +44,9 @@ class RemoveGiftItems implements ObserverInterface
         $quote = $this->checkoutSession->getQuote();
 
         /** @var Quote\Item $quoteItem */
-        if ($quote && (is_array($quote->getItems()) || is_object($quote->getItems())) && count($quote->getItems())) {
-            foreach ($quote->getItems() as $quoteItem) {
+        $quoteItems = $quote ? $quote->getItems() : null;
+        if (!empty($quoteItems)) {
+            foreach ($quoteItems as $quoteItem) {
                 if ($quoteItem->getOptionByCode(GiftAction::ITEM_OPTION_UNIQUE_ID) instanceof Quote\Item\Option) {
                     $quoteItem->isDeleted(true);
 
