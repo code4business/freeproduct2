@@ -6,6 +6,10 @@ The development and the function of the original Magento1 extension is described
 - <http://www.code4business.de/make-a-gift-magento-warenkorbpreisregeln-um-geschenke-erweitern/>
 - <http://www.webguys.de/magento/turchen-21-kostenlose-produkte-uber-warenkorb-preisregeln/>
 
+Contributors
+-------
+This repository is not run by code4business anymore, but Simon Sprankel and Ole Schäfer of CustomGento stepped up to keep freeproduct alive.
+
 Requirements
 -------
 - PHP 7.4, 8.1
