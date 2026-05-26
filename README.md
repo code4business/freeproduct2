@@ -12,7 +12,7 @@ This repository is not run by code4business anymore, but Simon Sprankel and Ole 
 
 Requirements
 -------
-- PHP 7.4, 8.1
+- PHP 7.4, PHP >= 8.1
 - Magento >= 2.4.3-p1
 
 Generally the last full release -1 version is tested and made to work. Older versions are not actively supported.
