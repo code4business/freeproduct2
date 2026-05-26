@@ -78,7 +78,7 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
     {
         $stateObject = $this->getAppliedRuleStorage($item);
 
-        if ($this->canApplyRule($item, $rule, $stateObject) == false)
+        if (!$this->canApplyRule($item, $rule, $stateObject))
         {
             return $this->getDiscountData($item);
         }
@@ -149,7 +149,7 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
 
         return (
             $this->isValidAddressType($item) &&
-            isset($appliedRuleIds[$rule->getId()]) == false
+            !isset($appliedRuleIds[$rule->getId()])
         );
     }
 
@@ -186,7 +186,7 @@ abstract class AbstractGiftAction implements Discount\DiscountInterface
     {
         $appliedRules = $stateObject->getData(static::APPLIED_FREEPRODUCT_RULE_IDS);
 
-        if ($appliedRules == null)
+        if ($appliedRules === null)
         {
             $appliedRules = [];
         }
