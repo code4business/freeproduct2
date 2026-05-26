@@ -5,7 +5,7 @@
   "homepage": "https://github.com/code4business/freeproduct2",
   "require": {
     "magento/module-sales-rule": "^101.2.3",
-    "php": "~7.1 || ~8.1 || ~8.2 || ~8.3 || ~8.4 || ~8.5"
+    "php": "~7.4 || ~8.1"
   },
   "type": "magento2-module",
   "license": [
