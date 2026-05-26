@@ -8,7 +8,7 @@ The development and the function of the original Magento1 extension is described
 
 Requirements
 -------
-- PHP 7.4, 8.1, 8.2, 8.3, 8.4, 8.5
+- PHP 7.4, 8.1
 - Magento >= 2.4.3-p1
 
 Generally the last full release -1 version is tested and made to work. Older versions are not actively supported.
